@@ -1,0 +1,39 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+
+const app = express();
+
+// Middleware setup
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(session({
+  secret: 'your_secret_key',
+  resave: true,
+  saveUninitialized: true
+}));
+
+// GET request handler
+app.get('/', (req, res) => {
+  // Accessing session data
+  const { session } = req;
+  const username = session.username || 'Guest';
+
+  res.send(`Hello, ${username}!`);
+});
+
+// POST request handler
+app.post('/login', (req, res) => {
+  const { username } = req.body;
+
+  // Store username in session
+  req.session.username = username;
+
+  res.redirect('/');
+});
+
+// Server listening on port 3000
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
+});
